@@ -30,6 +30,7 @@
 ├── assets/
 │   └── style.css
 ├── .gitignore
+├── IMPORT-DB.sql
 ├── LICENSE
 ├── README.md
 ├── config.php
