@@ -1,0 +1,11 @@
+CREATE TABLE `short_urls` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `long_url` VARCHAR(500) NOT NULL,
+  `short_code` VARCHAR(20) NOT NULL UNIQUE,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `expires_at` DATETIME DEFAULT NULL,
+  `click_count` INT(11) NOT NULL DEFAULT 0,
+  `user_ip` VARCHAR(50) DEFAULT NULL,
+  `custom_code` VARCHAR(20) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
