@@ -27,23 +27,23 @@
   <h2>📂 Folder Structure</h2>
   <pre><code>
 /url-shortener
-├── index.php
-├── shorten.php
-├── database/
-│   └── config.php
 ├── assets/
-│   ├── css/
-│   └── js/
-└── .gitignore
+│   └── style.css
+├── .gitignore
+├── LICENSE
+├── README.md
+├── config.php
+├── index.php
+└── redirect.php
   </code></pre>
 
   <h2>⚙️ Setup Instructions</h2>
   <ol>
     <li>Clone the repository:
-      <pre><code>git clone https://github.com/yourusername/url-shortener.git</code></pre>
+      <pre><code>git clone https://github.com/puffxhost/url-shortener.git</code></pre>
     </li>
     <li>Import the SQL database file (if provided) into your MySQL server.</li>
-    <li>Update database credentials in <code>database/config.php</code>.</li>
+    <li>Update database credentials in <code>config.php</code>.</li>
     <li>Upload files to your hosting (e.g., cPanel via Puffx Host)</li>
   </ol>
 
@@ -51,7 +51,7 @@
   <p>This project is licensed under the <strong>MIT License</strong>.</p>
 
   <h2>👨‍💻 Author</h2>
-  <p>Made with ❤️ by <a href="https://github.com/yourusername" target="_blank">Nitin Mehta</a><br>
+  <p>Made with ❤️ by <a href="https://github.com/puffxhost" target="_blank">Nitin Mehta</a><br>
      Instagram: <a href="https://instagram.com/unknown_coder1x" target="_blank">@unknown_coder1x</a>
   </p>
 
