@@ -56,4 +56,9 @@
      Instagram: <a href="https://instagram.com/unknown_coder1x" target="_blank">@unknown_coder1x</a>
   </p>
 
+  <hr>
+<p align="center">
+  Developed with ❤️ by <strong>Nitin Mehta</strong>
+</p>
+
 </div>
