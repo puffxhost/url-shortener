@@ -2,9 +2,9 @@
 include('config.php');
 
 // Get the short code from URL
-$code = isset($_GET['code']) ? trim($_GET['code']) : '';
+$code = isset($_GET['code']) && is_string($_GET['code']) ? trim($_GET['code']) : '';
 
-if (!empty($code)) {
+if (!empty($code) && preg_match('/^[A-Za-z0-9_-]{1,64}$/D', $code)) {
     // Check if code exists in database
     $stmt = $conn->prepare("SELECT long_url, expires_at FROM short_urls WHERE short_code = ?");
     $stmt->bind_param("s", $code);
@@ -20,10 +20,12 @@ if (!empty($code)) {
         }
 
         // Update click count
-        $conn->query("UPDATE short_urls SET click_count = click_count + 1 WHERE short_code = '$code'");
+        $update = $conn->prepare("UPDATE short_urls SET click_count = click_count + 1 WHERE short_code = ?");
+        $update->bind_param("s", $code);
+        $update->execute();
 
-        // Redirect with 301 (Permanent) or 302 (Temporary)
-        header("HTTP/1.1 301 Moved Permanently"); 
+        // Use a temporary redirect so expiry and destination changes take effect.
+        header("HTTP/1.1 302 Found"); 
         header("Location: " . $url['long_url']);
         exit();
     } else {
