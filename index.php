@@ -7,12 +7,15 @@ function generateCode($length = 6) {
 }
 
 if (isset($_POST['shorten'])) {
-    $long_url = trim($_POST['long_url']);
-    $custom_code = trim($_POST['custom_code']);
+    $long_url = isset($_POST['long_url']) && is_string($_POST['long_url']) ? trim($_POST['long_url']) : '';
+    $custom_code = isset($_POST['custom_code']) && is_string($_POST['custom_code']) ? trim($_POST['custom_code']) : '';
     $expiry_days = intval($_POST['expiry_days']);
 
-    if (!filter_var($long_url, FILTER_VALIDATE_URL)) {
-        $error = "Please enter a valid URL (e.g., https://example.com)";
+    $url_scheme = strtolower((string) parse_url($long_url, PHP_URL_SCHEME));
+    if (!filter_var($long_url, FILTER_VALIDATE_URL) || !in_array($url_scheme, ['http', 'https'], true)) {
+        $error = "Please enter a valid HTTP or HTTPS URL (e.g., https://example.com)";
+    } elseif ($custom_code !== '' && !preg_match('/^[A-Za-z0-9_-]{1,64}$/D', $custom_code)) {
+        $error = "Custom codes may contain only letters, numbers, hyphens, and underscores (up to 64 characters).";
     } else {
         $short_code = (!empty($custom_code)) ? $custom_code : generateCode();
         $expires_at = ($expiry_days > 0) ? date('Y-m-d H:i:s', strtotime("+$expiry_days days")) : NULL;
