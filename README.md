@@ -1,6 +1,8 @@
 # Puffx URL Shortener
 
-A lightweight PHP and MySQL link shortener. Create a random short link or choose a custom code, set an optional expiry, copy/share the result, and see recent links and click counts in the same browser session.\n\n> **[Open the interactive GitHub Pages demo](https://puffxhost.github.io/url-shortener/)** — this is a frontend preview only. It does not create working redirects or store data; use the PHP/MySQL setup below for a real installation.
+A self-hosted PHP and MySQL URL shortener. Create random or custom links, set expiry, track redirects, manage destinations, search and filter your latest links, and export the dashboard to CSV.
+
+> **[Open the interactive GitHub Pages demo](https://puffxhost.github.io/url-shortener/)** — this is a frontend preview only. It does not create working redirects or store data; use the PHP/MySQL setup below for a real installation.
 
 ## Features
 
@@ -8,10 +10,10 @@ A lightweight PHP and MySQL link shortener. Create a random short link or choose
 - Cryptographically random 10-character codes and optional custom codes (1–32 letters, numbers, `-`, or `_`).
 - Optional expiration: 1, 7, 30, or 90 days; links without expiry remain active.
 - Temporary HTTP 302 redirects so destination and expiry checks run on every visit.
-- Click counter and the latest 10 links created from the same browser session.
-- Browser-session ownership tokens are stored as SHA-256 hashes; other visitors sharing a public IP address do not see your recent links.
+- Dashboard totals and the latest 50 links from the current browser session.
+- Search links, filter active/expired rows, edit destinations without changing short codes, and export visible rows to formula-safe CSV.
 - CSRF protection, output escaping, prepared SQL statements, session-only creation throttling, and baseline HTTP security headers.
-- Copy and native share buttons; no third-party JavaScript or QR service is required.
+- Per-link copy/share actions; no third-party JavaScript or QR service is required.
 
 > This is a self-hosted starter tool, not a full multi-user SaaS. Dashboard access depends on the same browser profile and its cookies; clearing them loses management access, while public short links continue working. Add TLS, backups, monitoring, and stronger abuse controls before high-volume public use.
 
@@ -71,6 +73,38 @@ Open the configured `APP_BASE_URL` in a browser. If PHP reports that configurati
 6. Enable HTTPS and set `APP_BASE_URL` to the HTTPS address.
 7. Open the app, create a test link, then verify that the short link redirects and its click count increases.
 
+## Run with Docker
+
+The GitHub release workflow publishes a prebuilt Apache/PHP container to GHCR as `ghcr.io/puffxhost/url-shortener:<version>` and `:latest`. The image contains the application only; you must provide a reachable MySQL/MariaDB database and import the schema.
+
+1. Create the database and import the schema from a checkout (or download `IMPORT-DB.sql` from the release source):
+   ```bash
+   mysql -u YOUR_DB_USER -p YOUR_DB_NAME < IMPORT-DB.sql
+   ```
+2. Pull the release image:
+   ```bash
+   docker pull ghcr.io/puffxhost/url-shortener:latest
+   ```
+3. Start it with the database connection and the externally reachable app URL:
+   ```bash
+   docker run -d --name puffx-url-shortener --restart unless-stopped \
+     -p 8080:80 \
+     -e DB_HOST=host.docker.internal \
+     -e DB_USER=urlshortener_user \
+     -e DB_PASSWORD='use-a-strong-secret' \
+     -e DB_NAME=urlshortener \
+     -e APP_BASE_URL=http://localhost:8080 \
+     ghcr.io/puffxhost/url-shortener:latest
+   ```
+   On Linux, `host.docker.internal` may need `--add-host=host.docker.internal:host-gateway`; for a remote database set `DB_HOST` to its private network hostname. For production, use the real HTTPS URL in `APP_BASE_URL`, place the container behind a TLS reverse proxy, and protect database traffic/secrets.
+4. Open `http://localhost:8080`. To stop the container, run `docker stop puffx-url-shortener`.
+
+Never use the example password in a real deployment. Prefer a secrets manager or protected deployment environment instead of saving credentials in shell history.
+
+## Build and publish a release
+
+Create a GitHub release with a stable tag such as `v1.0.0`. The `.github/workflows/publish-container.yml` workflow runs for stable `vX.Y.Z` tags and publishes the versioned image plus `:latest` to GitHub Container Registry. The GitHub Actions token needs `packages: write`. On first publish, check the package page for visibility; GHCR packages can default to private even when the repository is public.
+
 ## Upgrade an existing installation
 
 1. Take a database backup and keep a copy of your current files.
@@ -118,6 +152,7 @@ url-shortener/
 ├── config.php      Environment loading, session, DB, and security headers
 ├── index.php       Link form, dashboard, search/filter, destination edit, and CSV export
 ├── redirect.php    Expiry checks, click counting, and HTTP 302 redirects
+├── Dockerfile      PHP/Apache production container image
 ├── IMPORT-DB.sql   Fresh database schema
 ├── MIGRATE-DB.sql  One-time migration for existing databases
 └── assets/style.css Responsive app stylesheet
