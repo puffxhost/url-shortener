@@ -1,0 +1,7 @@
+Options -Indexes
+RewriteEngine On
+
+# Keep real files and directories accessible, and route /{code} to the redirect handler.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([A-Za-z0-9_-]{1,32})/?$ redirect.php?code=$1 [L,QSA]
