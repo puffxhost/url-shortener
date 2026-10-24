@@ -28,7 +28,7 @@ $baseUrl = rtrim((string) (getenv('APP_BASE_URL') ?: ''), '/');
 
 $baseParts = $baseUrl !== '' ? parse_url($baseUrl) : false;
 $baseScheme = is_array($baseParts) ? strtolower((string) ($baseParts['scheme'] ?? '')) : '';
-if ($dbHost === '' || $dbUser === '' || $dbName === '' || $dbPassword === false || !in_array($baseScheme, ['http', 'https'], true) || empty($baseParts['host'])) {
+if ($dbHost === '' || $dbUser === '' || $dbName === '' || $dbPassword === false || !in_array($baseScheme, ['http', 'https'], true) || empty($baseParts['host']) || isset($baseParts['user']) || isset($baseParts['pass']) || isset($baseParts['query']) || isset($baseParts['fragment'])) {
     http_response_code(500);
     error_log('URL shortener is missing required DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, or APP_BASE_URL configuration.');
     exit('The URL shortener is not configured yet. Ask the site administrator to check the server environment settings.');
