@@ -13,7 +13,7 @@ A lightweight PHP and MySQL link shortener. Create a random short link or choose
 - CSRF protection, output escaping, prepared SQL statements, session-only creation throttling, and baseline HTTP security headers.
 - Copy and native share buttons; no third-party JavaScript or QR service is required.
 
-> This is a small self-hosted tool, not a full multi-user SaaS. Browser history is session-bound, not a login system. Add TLS, backups, monitoring, and stronger abuse controls before operating it as a public high-traffic service.
+> This is a self-hosted starter tool, not a full multi-user SaaS. Dashboard access depends on the same browser profile and its cookies; clearing them loses management access, while public short links continue working. Add TLS, backups, monitoring, and stronger abuse controls before high-volume public use.
 
 ## Requirements
 
@@ -116,7 +116,7 @@ The migration leaves old links, click counts, and any legacy IP values in place.
 url-shortener/
 ├── .htaccess       Apache clean-link rewrite rules
 ├── config.php      Environment loading, session, DB, and security headers
-├── index.php       Form, validation, link creation, and browser-session history
+├── index.php       Link form, dashboard, search/filter, destination edit, and CSV export
 ├── redirect.php    Expiry checks, click counting, and HTTP 302 redirects
 ├── IMPORT-DB.sql   Fresh database schema
 ├── MIGRATE-DB.sql  One-time migration for existing databases
