@@ -10,7 +10,12 @@ function e(string $value): string
 
 function makeShortCode(): string
 {
-    return bin2hex(random_bytes(4));
+    $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    $code = '';
+    for ($i = 0; $i < 10; $i++) {
+        $code .= $alphabet[random_int(0, strlen($alphabet) - 1)];
+    }
+    return $code;
 }
 
 if (empty($_SESSION['owner_token'])) {
