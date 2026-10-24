@@ -79,7 +79,7 @@ Open the configured `APP_BASE_URL` in a browser. If PHP reports that configurati
 4. Set the required environment variables and verify that `APP_BASE_URL` matches the deployed HTTPS address.
 5. Check an existing short link and create a new one.
 
-The migration leaves old links and click counts in place. Existing rows have no owner token, so they will still redirect but will not appear in the session-specific recent-links view. Do not run the migration more than once.
+The migration leaves old links, click counts, and any legacy IP values in place. This version no longer writes or displays IP addresses. Existing rows have no owner token, so they will still redirect but will not appear in the session-specific recent-links view. The migration makes short codes case-sensitive. Do not run the migration more than once.
 
 ## How links and ownership work
 
