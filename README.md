@@ -120,7 +120,7 @@ url-shortener/
 ├── redirect.php    Expiry checks, click counting, and HTTP 302 redirects
 ├── IMPORT-DB.sql   Fresh database schema
 ├── MIGRATE-DB.sql  One-time migration for existing databases
-└── assets/         Existing project styles
+└── assets/style.css Responsive app stylesheet
 ```
 
 ## Support & Contact
