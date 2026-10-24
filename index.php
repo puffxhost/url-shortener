@@ -264,6 +264,7 @@ $list->close();
           <div class="card-actions">
             <button class="btn secondary copy-link" type="button">Copy</button>
             <button class="btn secondary share-link" type="button">Share</button>
+            <span class="small card-status" aria-live="polite"></span>
           </div>
           <details class="edit-link">
             <summary>Edit destination</summary>
@@ -325,17 +326,17 @@ $list->close();
   }
 
   document.querySelectorAll('.link-card').forEach(card => {
-    const cardStatus = card.querySelector('.card-actions');
+    const cardStatus = card.querySelector('.card-status');
     card.querySelector('.copy-link')?.addEventListener('click', async () => {
       const ok = await copyText(card.dataset.short);
-      cardStatus.dataset.message = ok ? 'Short link copied.' : 'Copy failed; select the link to copy it.';
+      cardStatus.textContent = ok ? 'Short link copied.' : 'Copy failed; select the link to copy it.';
     });
     card.querySelector('.share-link')?.addEventListener('click', async () => {
       if (navigator.share) {
         try { await navigator.share({ title: 'Short link', url: card.dataset.short }); }
-        catch (error) { if (error.name !== 'AbortError') cardStatus.dataset.message = 'Sharing is not available on this device.'; }
+        catch (error) { if (error.name !== 'AbortError') cardStatus.textContent = 'Sharing is not available on this device.'; }
       } else {
-        cardStatus.dataset.message = 'Use Copy to share this link.';
+        cardStatus.textContent = 'Use Copy to share this link.';
       }
     });
   });
@@ -382,7 +383,7 @@ $list->close();
     link.href = URL.createObjectURL(blob);
     link.download = 'puffx-links-' + new Date().toISOString().slice(0, 10) + '.csv';
     link.click();
-    URL.revokeObjectURL(link.href);
+    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
   });
 })();
 </script>
