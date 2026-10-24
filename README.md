@@ -1,6 +1,6 @@
 # Puffx URL Shortener
 
-A lightweight PHP and MySQL link shortener. Create a random short link or choose a custom code, set an optional expiry, copy/share the result, and see recent links and click counts in the same browser session.
+A lightweight PHP and MySQL link shortener. Create a random short link or choose a custom code, set an optional expiry, copy/share the result, and see recent links and click counts in the same browser session.\n\n> **[Open the interactive GitHub Pages demo](https://puffxhost.github.io/url-shortener/)** — this is a frontend preview only. It does not create working redirects or store data; use the PHP/MySQL setup below for a real installation.
 
 ## Features
 
