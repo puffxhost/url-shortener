@@ -5,7 +5,7 @@ A lightweight PHP and MySQL link shortener. Create a random short link or choose
 ## Features
 
 - HTTP/HTTPS destination validation; embedded URL credentials and unsupported schemes are rejected.
-- Cryptographically random 8-character codes and optional custom codes (1–32 letters, numbers, `-`, or `_`).
+- Cryptographically random 10-character codes and optional custom codes (1–32 letters, numbers, `-`, or `_`).
 - Optional expiration: 1, 7, 30, or 90 days; links without expiry remain active.
 - Temporary HTTP 302 redirects so destination and expiry checks run on every visit.
 - Click counter and the latest 10 links created from the same browser session.
