@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS `short_urls` (
   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `long_url` VARCHAR(500) NOT NULL,
-  `short_code` VARCHAR(32) NOT NULL,
+  `short_code` VARCHAR(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
   `owner_token_hash` CHAR(64) NULL,
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `expires_at` DATETIME NULL DEFAULT NULL,
