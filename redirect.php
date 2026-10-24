@@ -1,38 +1,49 @@
 <?php
-include('config.php');
+declare(strict_types=1);
 
-// Get the short code from URL
+require_once __DIR__ . '/config.php';
+
 $code = isset($_GET['code']) && is_string($_GET['code']) ? trim($_GET['code']) : '';
-
-if (!empty($code) && preg_match('/^[A-Za-z0-9_-]{1,64}$/D', $code)) {
-    // Check if code exists in database
-    $stmt = $conn->prepare("SELECT long_url, expires_at FROM short_urls WHERE short_code = ?");
-    $stmt->bind_param("s", $code);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows > 0) {
-        $url = $result->fetch_assoc();
-        
-        // Check expiration
-        if ($url['expires_at'] && strtotime($url['expires_at']) < time()) {
-            die("<h2 style='text-align:center;margin-top:50px;'>This link has expired!</h2>");
-        }
-
-        // Update click count
-        $update = $conn->prepare("UPDATE short_urls SET click_count = click_count + 1 WHERE short_code = ?");
-        $update->bind_param("s", $code);
-        $update->execute();
-
-        // Use a temporary redirect so expiry and destination changes take effect.
-        header("HTTP/1.1 302 Found"); 
-        header("Location: " . $url['long_url']);
-        exit();
-    } else {
-        die("<h2 style='text-align:center;margin-top:50px;'>Invalid short URL!</h2>");
-    }
-} else {
-    header("Location: index.php");
-    exit();
+if ($code === '' || !preg_match('/^[A-Za-z0-9_-]{1,32}$/D', $code)) {
+    http_response_code(404);
+    exit('Short link not found.');
 }
-?>
+
+$stmt = $conn->prepare('SELECT long_url, expires_at FROM short_urls WHERE short_code = ? LIMIT 1');
+$stmt->bind_param('s', $code);
+$stmt->execute();
+$stmt->bind_result($destination, $expiresAt);
+$found = $stmt->fetch();
+$stmt->close();
+
+if (!$found) {
+    http_response_code(404);
+    exit('Short link not found.');
+}
+
+if ($expiresAt !== null && strtotime((string) $expiresAt . ' UTC') <= time()) {
+    http_response_code(410);
+    header('Content-Type: text/html; charset=utf-8');
+    echo '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Link expired</title><body style="font:16px system-ui;max-width:640px;margin:12vh auto;padding:24px;color:#20283a"><h1>This short link has expired</h1><p>Ask the person who shared it for a new link.</p></body></html>';
+    exit;
+}
+
+$parts = parse_url((string) $destination);
+$scheme = strtolower((string) ($parts['scheme'] ?? ''));
+if (!filter_var($destination, FILTER_VALIDATE_URL) || !in_array($scheme, ['http', 'https'], true) || empty($parts['host'])) {
+    http_response_code(410);
+    error_log('URL shortener blocked an invalid stored destination for code ' . $code);
+    exit('This short link has an invalid destination.');
+}
+
+try {
+    $update = $conn->prepare('UPDATE short_urls SET click_count = click_count + 1 WHERE short_code = ?');
+    $update->bind_param('s', $code);
+    $update->execute();
+    $update->close();
+} catch (Throwable $exception) {
+    error_log('URL shortener click counter update failed: ' . $exception->getMessage());
+}
+
+header('Location: ' . $destination, true, 302);
+exit;
